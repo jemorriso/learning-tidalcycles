@@ -1,0 +1,56 @@
+d1 $ sound "bd sn"
+
+d4 $ sound "bd sn bd sn"
+
+d4 silence
+
+d2 $ sound "arpy"
+  # crush 4
+
+d3 $ sound "arpy arpy"
+
+d1 $ n "0 4 2 5 3 2 5 3" # sound "cpu"
+
+hush
+
+d1 $ "kick snare"
+
+d1 $ n "[ 0 0 0 0 ] ~ 0 ~" # sound "kick"
+
+d1 $ n "[ 0 0 ] ~ 0 ~" # sound "kick"
+
+d2 $ n "~ 1 ~ [ 1 1 ]" # sound "snare"
+
+d2 $ n "~ 1 ~ [ 1 ]" # sound "snare"
+
+d1 $ n "0 ~ 0 ~" # sound "kick"
+
+d3 $ n "~ 1 ~ 1 ~ 1 ~ 1" # sound "hi"
+
+d3 $ n "~ 2 ~ 2 ~ 2 ~ 2" # sound "hi"
+
+d4 $ n "~ 2 ~ 2 ~ 2 ~ 2" # sound "hi"
+
+d3 silence
+
+d4 silence
+
+d5 $ n "~ 1 ~ 1" # sound "clap"
+
+d5 $ n "~ 1 ~ [1~~1]" # sound "clap"
+
+d5 $ n "~ 2 ~ [[2 1 1 1 1 1]~~2]" # sound "clap"
+
+d5 silence
+
+hush
+
+d6 $ n "[0 0 0 0 1 2] [0 3 2 4]" # sound "kick"
+
+d6 $ n "~ [0 3 2 4]" # sound "kick"
+
+d7 $ n "[[4 4] 4 4 4] 4 4 4" # sound "kick"
+
+d7 $ n "4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 " # sound "kick"
+
+d7 silence
