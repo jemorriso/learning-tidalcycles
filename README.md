@@ -561,7 +561,7 @@ d1 $ n "0 [0|1*3|2*8|3 4 5] 2 3" # sound "cpu"
 ```
 #### the `?` operator
 randomly drop an event
-```d1 $ sound "bd bd bd clap?"````
+```d1 $ sound "bd bd bd clap?"```
 with 50/50 probability
 
 ```d1 $ sound "bd bd bd clap?0.1"```
@@ -586,6 +586,23 @@ divide pattern into `n` parts, and then shuffle them, such that each part is pla
 ### choose
 pick between single values
 - function is continuous so you need to give it structure
+- any structure will work... euclidean, etc.
 
 ```d1 $ sound (segment 8 $ choose ["bd", "arpy", "snare"])```
 
+### wchoose
+weighted choose
+```d1 $ sound "clap*4" # speed (wchoose [(2, 4), (-2, 2)])```
+choose speed 2 with weight 4, -2 with weight 2 (half as likely)
+- note that *negative speed* makes the sample play in reverse!
+
+### randomness in tidal
+is deterministic - derived from the clock. So if we use `rand` function twice, the two things being randomized get the same random numbers at the same times.
+```d1 $ sound "clap*2" # speed (range 0.1 2 rand) # pan rand```
+here you can hear that when `rand` is low, the clap is low in pitch and panned to the left, and vice versa for high `rand`
+
+```
+d1 $ sound "clap*2" # speed (range 0.1 2 rand)
+  # pan (slow 1.001 rand)
+```
+here we slow one of the patterns down so that now they are completely uncorrelated
