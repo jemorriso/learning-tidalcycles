@@ -606,3 +606,103 @@ d1 $ sound "clap*2" # speed (range 0.1 2 rand)
   # pan (slow 1.001 rand)
 ```
 here we slow one of the patterns down so that now they are completely uncorrelated
+
+---
+
+## [week 4 lesson 3 - random marathon part 2](./week-4-lesson-3.tidal)
+
+[source](https://tidalcycles.org/docs/patternlib/tutorials/course1/#lesson-2-random-marathon-part-i)
+
+### cat
+concatenate patterns together
+```d1 $ sound (cat ["kick snare:4 [~ kick] snare:5", "kick snare:4 . hc(5,8)"])```
+
+### randcat
+concatenate them in a random order
+```d1 $ sound (randcat ["kick snare:4 [~ kick] snare:5", "kick snare:4 . hc(5,8)"])```
+
+```
+d1 $ vowel (randcat ["a e*2 i o", "e o u", "o*8"])
+   # sound ("kick snare:4 clap:4")
+```
+notice how the randomly chosen pattern is used as the structure and the sound gets mapped onto it
+> seems like it doesn't always pick one of each though... in which case why do you need to concatenate? Why not just `choose`?
+
+### wrandcat
+weighted `randcat`
+
+```
+d1 $ sound (wrandcat [("bd sn:4(3,8)", 100),
+                      ("arpy clap", 0.5),
+                      ("cpu(5,8)", 0.25)
+                     ]
+           )
+```
+picks the first pattern over and over. So not seeing the difference between `wchoose` and `wrandcat` here...
+
+### stripe
+`stripe n` divides the cycle into `n` parts randomly, and then plays `n` repetitions
+```
+d1 $ stripe 2 $ n "0 4*2 ~ 4 2 4 5 ~" # sound "cpu2"
+  # squiz 2
+  ```
+e.g. random number 0.75 is chosen, the first cycle takes up 0.75 cycles and the second one takes up 0.25
+
+### degrade
+```
+d1 $ sound "bd*8?"
+
+-- Degrade is a function that does the same:
+d1 $ degrade $ sound "bd*8"
+```
+i.e. it randomly drops out notes like the `?` mini-notation syntax
+
+### degradeby
+weighted `degrade`
+```d1 $ degradeBy 0.6 $ sound "bd*8"```
+60% chance of dropping a note
+
+### sometimes
+apply function only sometimes
+```d1 $ sometimes (# crush 4) $ n "0 ~ 3 1 5 2 ~ 5" # sound "cpu"```
+note that it occurs within cycle - here `crush` may be applied for some sections and then not for other sections within one cycle
+
+### sometimesBy
+weighted `sometimes`
+```d1 $ sometimesBy 0.3 (# crush 4) $ n "0 ~ 3 1 5 2 ~ 5" # sound "cpu"```
+
+### other frequencies
+```
+-- There's some aliases for different probabilities:
+
+{-
+sometimes = sometimesBy 0.5
+often = sometimesBy 0.75
+rarely = sometimesBy 0.25
+almostNever = sometimesBy 0.1
+almostAlways = sometimesBy 0.9
+-}
+```
+
+### somecycles
+randomly apply to cycles rather than individual events within the cycle
+```
+d1 $ somecycles (hurry 2) $ n "0 ~ 3 1 5 2 ~ 5" # sound "cpu"
+  # speed 1.5
+  ```
+
+### somecyclesBy
+weighted `somecycles`
+
+### randslice
+take a random chunk of the beat and play 1 event at the beginning of the cycle
+```d1 $ randslice 4 $ sound "break:8"```
+plays 1 quarter of the break (so there are then 3 quarter notes of silence)
+
+```d1 $ loopAt 1 $ randslice 4 $ sound "break:8*4"```
+now it fits 4 quarter notes into 1 cycle
+
+still not totally sure what `loopAt` is doing... I think it packs the quarter notes into 1 cycle
+
+```d1 $ splice 4 (segment 4 $ irand 4) $ sound "break:8"```
+Another way of achieving random break chopping... here we segment the break into 4 parts, pick randomly amongst them, and then play 1 after the other with `splice 4`
