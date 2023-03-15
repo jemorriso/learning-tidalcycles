@@ -706,3 +706,92 @@ still not totally sure what `loopAt` is doing... I think it packs the quarter no
 
 ```d1 $ splice 4 (segment 4 $ irand 4) $ sound "break:8"```
 Another way of achieving random break chopping... here we segment the break into 4 parts, pick randomly amongst them, and then play 1 after the other with `splice 4`
+
+---
+
+## [week 5 lesson 1 - musical notes](./week-5-lesson-1.tidal)
+
+[source](https://tidalcycles.org/docs/patternlib/tutorials/course2#lesson-1-musical-notes)
+
+### note
+`note "3"` prints out the information about the first cycle, given the note pattern. Use `note` in addition to `drawLine`
+
+```
+tidal> note "3"
+(0>1)|note: 3.0n (ds5)
+tidal> note "0"
+(0>1)|note: 0.0n (c5)
+tidal> note "0 ~"
+(0>½)|note: 0.0n (c5)
+```
+
+I thought `note "0"` would be middle C (c4)? Well he says it is middle c but it's c5 for some reason.
+
+Note that it also shows the rhythm of the note as shown on the last line.
+
+Depending on the instrument you are using, you can use non-integer notes:
+`d1 $ note "12.34" # sound "supermandolin"`
+
+### sharps and flats
+```
+-- This:
+
+note "a b c d e f g"
+
+-- is the same as:
+
+note "9 11 0 2 4 5 7"
+
+-- What happened to 1, 3, 6, 8, and 10?
+-- You can get to them by adding 's' for 'sharp', to add 1 to a note:
+
+note "cs ds fs gs as"
+
+-- or by using 'f' for 'flat' to subtract 1:
+
+note "df ef gf af bf"
+```
+
+`d1 $ note "csssssss g" # s "superpiano"`
+these are the same
+
+To get different octaves:
+`note "c5 c6 c4 c6"`
+
+These are the same:
+```
+d1 $ n "c a f e" # s "superpiano"
+
+d1 $ note "c a f e" # s "superpiano"
+```
+
+Note how we use n-patterns for samples as well as synthesizers!
+
+But it means something different for samples:
+```
+-- For samples, they mean something different. 'n' chooses a sample,
+-- 'note' plays it at a different speed, corresponding to a note.
+
+-- Different sounds:
+d1 $ n "0 1" # sound "dsynth"
+
+-- Different notes:
+d1 $ note "0 1" # sound "dsynth"
+```
+Need to be careful if using note *letters* with samples, because letters are just aliases for numbers - then it's just picking the numbered sample!
+
+Using both together:
+```
+-- The 'dbass' sample has three bass sounds, again in 'c', of
+-- different lengths.  So it makes sense to use *both* 'note' and 'n'
+-- together, to pattern both the pitch and the sample that's used:
+d1 $ note "c a f e" # sound "dbass" # n "<0 1 2>"
+```
+
+### octave
+jump up and down by 12
+```
+-- There's also an 'octave' control to jump up/down in twelves:
+d1 $ note "c a f e" # sound "superpiano"
+  # octave "<4 6 3>"
+```
