@@ -23,6 +23,18 @@ Once SuperDirt is running, run `tidal` from command line which is a script provi
 
 Then use vim tidal / slime to send snippets to the tmux window running the `tidal` command
 
+## Install without the automatic install script
+Follow [recommended haskell install](https://www.haskell.org/ghcup/)
+
+Do `brew install --cask supercollider`
+
+Get [latest sc3-plugins version](https://github.com/supercollider/sc3-plugins), unzip, and move `SC3plugins` folder to `/Users/jerry/Library/Application Support/SuperCollider/Extensions/SC3plugins`
+> there seem to be a bunch of extra files that supercollider tries to load and errors, but I think it's picking up the plugin files properly as well.
+
+Follow the rest of the manual install process from [tidalcyles](https://tidalcycles.org/docs/getting-started/macos_install/)
+
+Install vim tidal, go to install directory, run `make install`
+
 ---
 
 [Forum Index weeks 1 to 4](https://club.tidalcycles.org/t/weeks-1-4-index/395)
@@ -795,3 +807,45 @@ jump up and down by 12
 d1 $ note "c a f e" # sound "superpiano"
   # octave "<4 6 3>"
 ```
+---
+
+## [week 5 lesson 2 - musical notes](./week-5-lesson-2.tidal)
+
+[source](https://tidalcycles.org/docs/patternlib/tutorials/course2/#lesson-2-chords-arpeggios-and-algoraoke)
+
+### playing chords
+```d1 $ n "c'maj e'maj" # sound "supermandolin"```
+alias for `c'maj` is just `'maj`. c is default
+
+these are the same:
+```
+d1 $ arpeggiate $ n "c'maj" # s "superpiano"
+
+d1 $ arpeggiate $ n "c'maj'3" # s "superpiano"
+```
+the reason is the 2nd says play the first 3 notes of the c chord
+
+`d1 $ arpeggiate $ n "c'maj'7" # s "superpiano"`
+this will play c chord, then c chord of higher octave, then finally c note of 2x high octave
+
+these are the same:
+```
+d1 $ n "c'sevenFlat9 a'm9sharp5" # sound "supermandolin"
+
+d1 $ n "[0,4,7,10,13] [9,10,23]" # sound "supermandolin"
+```
+because everything in the chord gets turned into numbers!
+
+### arpeggiate
+`d1 $ arpeggiate $ n "c'maj'4 e'min7'4" # s "superpiano"`
+
+### arp
+`arp` is more flexible because you can specify the pattern in which the chord is arpeggiated
+```
+d1 $ arp "updown thumbup" $ n "<c'maj'4 e'min7'4>" # s "superpiano"
+
+-- Here's the list of currently available arp styles to explore:
+-- up, down, updown, downup, converge, diverge, disconverge, pinkyup,
+-- pinkyupdown, thumbup thumbupdown
+```
+
