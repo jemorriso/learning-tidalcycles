@@ -849,3 +849,34 @@ d1 $ arp "updown thumbup" $ n "<c'maj'4 e'min7'4>" # s "superpiano"
 -- pinkyupdown, thumbup thumbupdown
 ```
 
+---
+
+## [week 5 lesson 3 - adding superdirt synths](./week-5-lesson-3.tidal)
+
+[source](https://tidalcycles.org/docs/patternlib/tutorials/course2/#lesson-3-adding-and-using-superdirt-synths)
+
+I cloned [this repo](https://github.com/diegodorado/tidal-synths), then copied the code for the synth `cs80lead` into the `sclang` repl. That loads the synth and allows you to call it from tidal: `d1 $ sound "cs80lead"`
+
+Then you can run effects on the synth in tidal as normal:
+`d1 $ n "c5" # sound "cs80lead" # crush 3 # room 0.2 # sz 0.6`
+
+### modifying the synth
+sounds like there is something wrong with the envelope, apparently because superdirt takes care of the envelopes... so we can remove the envelopes from the synth ??
+
+`d1 $ n "c5" # sound "cs80lead" # crush 3 # room 0.2 # sz 0.6 # vowel "a e" # pF "dtune" "<1 0.2>"`
+here `pF` means parameter of type floating point - `dtune` is an effect on the supercollider synth, so using `pF` allows us to pattern it in tidal!
+
+We can do `dtune = pF "dtune"` and then use `dtune` as a variable.
+
+Better yet, we can add it to my tidal boot script:
+`~.cabal/share/aarch64-osx-ghc-9.2.5/tidal-1.9.4/BootTidal.hs`
+
+so that it's always available on tidal startup.
+
+Then we can do the same with the synth, copying our `cs80lead` code into the supercollider startup file.
+
+---
+
+## [week 5 lesson 4 - superdirt part 2](./week-5-lesson-4.tidal)
+
+[source](https://tidalcycles.org/docs/patternlib/tutorials/course2/#lesson-4-superdirt-part-ii)

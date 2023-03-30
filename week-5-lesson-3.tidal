@@ -1,0 +1,7 @@
+hush
+
+d1 $ sound "cs80lead"
+
+d1 $ n "c5" # sound "cs80lead" # crush 3 # room 0.2 # sz 0.6 # vowel "a e" # pF "dtune" "<1 0.2>"
+
+d1 $ n "c5" # sound "cs80lead" # crush 3 # room 0.2 # sz 0.6 # vowel "a e" # dtune "<1 0.2>"
