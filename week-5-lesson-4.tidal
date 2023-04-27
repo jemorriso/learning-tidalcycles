@@ -1,0 +1,19 @@
+d1 $ s "test"
+
+d1 $ s "test*8"
+
+d1 $ s "test*16"
+
+d1 $ n "[7 0 3 0]*4" |+ n "<0 5 -2 3>*2" |+ s "test"
+
+d1 $ n "[7 0 3 0]*4" |+ n "<0 5 -2 3>*2" |+ s "test2"
+
+d1 $ n "[7 0 3 0]*4" |+ n "<0 5 -2 3>*2" |+ s "test3"
+
+d1 $ n "[7 0 3 0]*4" |+ n "<0 5 -2 3>*2" |+ s "test4" # pF "clamp" (slow 4 $ cosine)
+
+d1 $ s "test3"
+
+d1 $ s "test3" # begin 0.5 # end 0.8
+
+hush

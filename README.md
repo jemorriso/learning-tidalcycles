@@ -880,3 +880,125 @@ Then we can do the same with the synth, copying our `cs80lead` code into the sup
 ## [week 5 lesson 4 - superdirt part 2](./week-5-lesson-4.tidal)
 
 [source](https://tidalcycles.org/docs/patternlib/tutorials/course2/#lesson-4-superdirt-part-ii)
+
+when you send an expression to tidal and superdirt can't find the sample, it will look instead for a supercollider synthdef to use
+
+```
+SynthDef(\test, {
+  |out,sustain=1,freq=440,speed=1,begin=0,end=1,pan,accelerate,offset|
+}).add;
+```
+`test` is the synth name here
+then we have a list of parameters that are either understood by tidal or superdirt
+- note that these parameters are sent *by superdirt* (see how some have default values)
+- `out` is the paramter that superdirt uses to tell us which bus to output on
+
+[here](https://github.com/musikinformatik/SuperDirt/blob/develop/synths/default-synths.scd) is a list of default superdirt synths
+
+```
+SynthDef(\test, {
+  |out,sustain=1,freq=440,speed=1,begin=0,end=1,pan,accelerate,offset|
+  OffsetOut.ar(out,[SinOsc.ar(freq)]);
+}).add;
+```
+`OffsetOut` is a *ugen* (unit generator) which is like a synth building block
+- send audio to a bus + array of channels to write to
+
+so here we send a sinusoidal oscillator with frequency 440 hz to the bus provided by superdirt.
+
+`ar` means audio rate, as opposed to `kr`, control rate, which is at like a lower granularity for things like knobs... wot
+- `kr` is easier on the CPU
+
+```
+SynthDef(\test, {
+  |out,sustain=1,freq=440,speed=1,begin=0,end=1,pan,accelerate,offset|
+  var tone = SinOsc.ar(freq);
+  var env = Line.ar(1,0,sustain);
+  var outAudio = tone*env;
+
+  OffsetOut.ar(out,[outAudio, outAudio]);
+}).add;
+```
+add an envelope so that the sound is modulated using a simple line envelope
+
+note how we multiply the tone by env, which mathematically makes sense. Then duplicated `outAudio` because we're in stereo
+
+`d1 $ s "test*8"` divides the `sustain` parameter that superdirt passes in so that it's 1/8 as long and the note repeats 8 times in a cycle
+
+```
+SynthDef(\test, {
+  |out,sustain=1,freq=440,speed=1,begin=0,end=1,pan,accelerate,offset|
+  var tone = SinOsc.ar(freq);
+  var env = Line.ar(1,0,sustain, doneAction: Done.freeSelf);
+  var outAudio = tone*env;
+
+  OffsetOut.ar(out,[outAudio, outAudio]);
+}).add;
+```
+we use `doneAction` in order to free the memory when the synth (or is it the envelope?) is not in use anymore
+
+```
+SynthDef(\test2, {
+  |out,sustain=1,freq=440,speed=1,begin=0,end=1,pan,accelerate,offset|
+  var env = Line.ar(1,0,sustain, doneAction: Done.freeSelf);
+  var tone = Pulse.ar(freq, env);
+  var outAudio = tone*env;
+
+  OffsetOut.ar(out,[outAudio, outAudio]);
+}).add;
+```
+
+`Pulse` here is a pulse wave which is just a square wave where we can modify the width as we want - we are doing *pulse wave modulation* by passing in the envelope into its width parameter
+
+```
+SynthDef(\test3, {
+  |out,sustain=1,freq=440,speed=1,begin=0,end=1,pan,accelerate,offset|
+  var env = Env.new(levels: [0, 1, 0.9, 0], times: [0.1, 0.5, 1], curve: [-5, 0, -5]);
+  var line = Line.ar(begin,end,sustain, doneAction: Done.freeSelf);
+  var volume = IEnvGen.ar(env, line);
+  var tone = Pulse.ar(freq, line);
+  var outAudio = tone*volume;
+
+  OffsetOut.ar(out,[outAudio, outAudio]);
+}).add;
+```
+here we're using `line` for index, such that we apply `env` to it (from 0 to 1, over `sustain` length)
+- that's how we generate our `volume` envelope
+
+use `begin` and `end` in the definition of `line` so we can chop up the envelope in tidal: 
+`d1 $ s "test3" # begin 0.5 # end 0.8`
+
+```
+SynthDef(\test3, {
+  |out,sustain=1,freq=440,speed=1,begin=0,end=1,pan,accelerate,offset|
+  var line = Line.ar(begin,end,sustain, doneAction: Done.freeSelf);
+  var env = Env.new(levels: [0, 1, 0.9, 0], times: [0.1, 0.5, 1], curve: [-5, 0, -5]);
+  var volume = IEnvGen.ar(env, line);
+  var tone = Pulse.ar(freq, line);
+  var outAudio = tone*volume;
+
+  OffsetOut.ar(out,DirtPan.ar(outAudio, ~dirt.numChannels, pan, volume));
+}).add;
+```
+We use `DirtPan` which is a utility function that helps SuperDirt integrate with SuperCollider - it ensures our sound is passed to SuperDirt properly...
+
+```
+SynthDef(\test4, {
+  |out,sustain=1,freq=440,speed=1,begin=0,end=1,pan,accelerate,offset,clamp|
+  var line = Line.ar(begin,end,sustain, doneAction: Done.freeSelf);
+  var env = Env.new(levels: [0, 1, 0.9, 0], times: [0.1, 0.5, 1], curve: [-5, 0, -5]);
+  var volume = IEnvGen.ar(env, line);
+  var tone = Pulse.ar(freq, line);
+  // 20000 kHz is ~ limit of human hearing
+  var outAudio = RLPF.ar(tone*volume, 20000*clamp*volume,0.1);
+
+  OffsetOut.ar(out,DirtPan.ar(outAudio, ~dirt.numChannels, pan, volume));
+}).add;
+```
+Use the volume envelope to automate the clamp effect passed via tidal (note how it's in our params list):
+
+`d1 $ n "[7 0 3 0]*4" |+ n "<0 5 -2 3>*2" |+ s "test4" # pF "clamp" (slow 4 $ cosine)`
+
+That sounds pretty crazy! The amount of `clamp` is being modulated by a cosine wave, but in the synthdef it's also being modified in the resonant low-pass filter
+
+
