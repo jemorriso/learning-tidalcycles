@@ -1001,4 +1001,38 @@ Use the volume envelope to automate the clamp effect passed via tidal (note how 
 
 That sounds pretty crazy! The amount of `clamp` is being modulated by a cosine wave, but in the synthdef it's also being modified in the resonant low-pass filter
 
+---
 
+## [week 6 lesson 1 - canons with 'off'](./week-6-lesson-1.tidal)
+
+[source](https://tidalcycles.org/docs/patternlib/tutorials/course2#lesson-1-canons-with-off)
+```
+tidal> :t off
+off
+  :: Pattern Time
+     -> (Pattern a -> Pattern a) -> Pattern a -> Pattern a
+```
+
+the last `Pattern a` is the output, the first 3 expressions are inputs
+- 'Pattern Time' means the `Time` input is time-related in some way
+
+`d1 $ off 0.25 (# crush 4) $ n "c e" # sound "supermandolin"`
+here *0.25* means quarter note
+- see how there are 3 inputs:
+  - 0.25
+  - (# crush 4)
+  - stuff to right of $
+
+> `off` takes a pattern, plays it as normal, but overlays an offset version and plays it as well.
+
+see worksheet for list of offset shorthands available
+
+`d1 $ off "e" (|+ n "<7 12 -5>") $ n (slow 2 "c(3,8) a(3,8) f(5,8) e*2") # sound "supermandolin" # sustain 0.75`
+
+`slow` makes the pattern take 2 cycles, so we get 3*2 variations with the n-pattern
+- `e` here means offset by an eighth note
+- add `sustain` because otherwise the synth notes are just filling the size of their grid
+
+`d1 $ off "<s q e>" (# squiz 2) $ n "{0 1 [~ 2] 3*2, 5 ~ 3 6 4}" # sound "cpu2" # sustain 0.75`
+
+this is a cool idea with percussion - parameterizing the amount of offset so it changes each cycle!
