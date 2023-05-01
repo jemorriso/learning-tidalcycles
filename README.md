@@ -1036,3 +1036,57 @@ see worksheet for list of offset shorthands available
 `d1 $ off "<s q e>" (# squiz 2) $ n "{0 1 [~ 2] 3*2, 5 ~ 3 6 4}" # sound "cpu2" # sustain 0.75`
 
 this is a cool idea with percussion - parameterizing the amount of offset so it changes each cycle!
+
+---
+
+## [week 6 lesson 2 - musical scales](./week-6-lesson-2.tidal)
+
+[source](https://tidalcycles.org/docs/patternlib/tutorials/course2#lesson-2-musical-scales)
+
+`scaleList` to show all the available scales
+
+add randomness:
+`d1 $ n ("0 [7 2] 3 2" |+ irand 3) # sound "arpy"`
+
+but randomness is kind of crude for variation
+
+- note that `arpy` samples are in a pentatonic scale
+
+#### using waveforms on scales
+```
+d1 $ segment 16 $ n (scale "minor"
+                     $ floor <$> (range 0 14 sine)
+                    )
+  # sound "supersaw"
+  # legato 0.5
+  # lpf 1000 # lpq 0.1
+```
+
+maps a sine wave onto a minor scale so that it's like it's sampling from the sine wave at intervals, and outputting a note of the minor scale (2 octaves is 14 notes)
+- use `floor <$>` because `scale` cannot take floating point number
+- then `segment 16` because the n-pattern does not produce events, need to give it some structure
+
+```
+d1 $ struct "t(<9 7>,16)"
+  $ n (scale "minor"
+        $ floor <$> (range "<0 4 -8>" "<12 14 13 -13>" sine)
+      )
+  # sound "supersaw"
+  # legato 0.5
+  # lpf (range 400 5000 saw) # lpq 0.1
+```
+adds Euclidean structure
+
+```
+d1 $ segment 16 $
+  n (scale "minor"
+      $ floor <$> (slow 2 $ (slow 2 sine + slow 3 cosine) * "<6 -3>"
+                  )
+    )
+  # sound "supersaw"
+  # legato 0.5
+  # lpf (range 400 5000 saw) # lpq 0.1
+```
+
+makes a longer form variation by using slow sine and cosine waves
+- see how instead of using `range` we just multiply by `<6 -3>`
