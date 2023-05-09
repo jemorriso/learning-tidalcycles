@@ -1090,3 +1090,42 @@ d1 $ segment 16 $
 
 makes a longer form variation by using slow sine and cosine waves
 - see how instead of using `range` we just multiply by `<6 -3>`
+
+---
+
+## [week 6 lesson 3 - controlling MIDI devices](./week-6-lesson-3.tidal)
+
+[source](https://tidalcycles.org/docs/patternlib/tutorials/course2#lesson-3-controlling-midi-devices)
+
+### how to connect tidal to ableton on macos
+follow [this yt vid](https://www.youtube.com/watch?v=cdB0dBGiar4) (only first part) to create a virtual midi port using IAC driver in MIDI studio
+
+then, follow the source video above to find and add the midi out to superdirt like so:
+```
+midiclient.init;
+
+~midiout = midiout.newbyname("iac driver", "tidal1")
+
+~dirt.soundlibrary.addmidi(\tidal1, ~midiout);
+```
+(the midi port was named `tidal1` in IAC driver)
+
+- in ableton, set the midi in of `tidal1` to 'track'
+- add a midi track, set midi from to `tidal1`
+- set monitor to 'auto'
+
+from tidal, use `tidal1` like so:
+`d1 $ n "0 7 12" # sound "tidal1"`
+
+### control change messages
+you can send cc messages to the midi device, but you need to know the numbers of the midi controls
+`d1 $ n "0 7 12" # sound "tidal1" # cc "1:60"`
+where `1` is the midi control number and `60` is the amount (possibly from 0-128)
+
+alternatively:
+`d1 $ n "0 7 12" # sound "tidal1" # ccn "1" # ccv "60"`
+for cc number and cc value
+
+you can pattern the control change values!
+`d1 $ n "0 7 12" # sound "tidal1" # ccv "<0 127>" # ccn "1" `
+

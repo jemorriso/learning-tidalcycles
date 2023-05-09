@@ -1,0 +1,10 @@
+-- i think i'm failing to understand something here, in the video he has an actual midi cable plugged into his synth and interface, while I just have a midi controller
+-- i thought it might work to route sound to ableton 'through the controller' but it's not working
+d1 $ n "0 7 12" # sound "launchkey"
+
+-- update: it works with ableton (no launchkey)!!!! 🙏🙏🙏
+d1 $ n "0 7 12" # sound "tidal1"
+
+d1 $ n "0 7 12" # sound "cpu"
+
+hush
