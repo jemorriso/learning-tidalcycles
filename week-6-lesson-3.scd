@@ -1,9 +1,9 @@
-midiclient.init;
+MIDIClient.init;
 
-~midiout = midiout.newbyname("launchkey 49", "launchkey midi")
+// ~midiOut = MIDIOut.newByName("launchkey 49", "launchkey midi")
 
-~midiout2 = midiout.newbyname("iac driver", "tidal1")
+~midiOut = MIDIOut.newByName("IAC Driver", "Tidal1")
 
-~dirt.soundlibrary.addmidi(\launchkey, ~midiout);
+// ~dirt.soundlibrary.addmidi(\launchkey, ~midiout);
 
-~dirt.soundlibrary.addmidi(\tidal1, ~midiout2);
+~dirt.soundLibrary.addMIDI(\tidal1, ~midiOut);

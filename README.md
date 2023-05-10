@@ -1102,11 +1102,11 @@ follow [this yt vid](https://www.youtube.com/watch?v=cdB0dBGiar4) (only first pa
 
 then, follow the source video above to find and add the midi out to superdirt like so:
 ```
-midiclient.init;
+MIDIClient.init;
 
-~midiout = midiout.newbyname("iac driver", "tidal1")
+~midiOut = MIDIOut.newByName("IAC Driver", "Tidal1")
 
-~dirt.soundlibrary.addmidi(\tidal1, ~midiout);
+~dirt.soundLibrary.addMIDI(\tidal1, ~midiOut);
 ```
 (the midi port was named `tidal1` in IAC driver)
 
