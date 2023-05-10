@@ -1129,3 +1129,21 @@ for cc number and cc value
 you can pattern the control change values!
 `d1 $ n "0 7 12" # sound "tidal1" # ccv "<0 127>" # ccn "1" `
 
+
+---
+
+## [week 6 lesson 4 - controlling MIDI devices](./week-6-lesson-4.tidal)
+
+[source](https://tidalcycles.org/docs/patternlib/tutorials/course2#lesson-4-controlling-tidal-with-midi)
+[source2](https://tidalcycles.org/docs/working-with-patterns/Controller_Input/)
+
+use the code in [week-6-lesson-4.scd](./week-6-lesson-4.scd) to connect all available MIDI devices to tidal and convert the MIDI messages to OSC (he says we don't need to know about OSC atm)
+
+`d1 $ sound "bd*16" # djf (cF 0.5 "41")`
+here we're using `cF` which is controlling a float number, with the cc number 41 on my novation launchkey, which is the first fader ([source](https://support.novationmusic.com/hc/en-gb/articles/207561095-What-MIDI-CC-Messages-do-the-controls-on-the-Launchkey-Send-)) in order to turn the fader into a low-pass filter!! (`djf`)
+- 0.5 is the default value
+
+using mini-notation:
+`d1 $ sound "bd*16" # djf ("^41")`
+
+the disadvantage of mini-notation is that there's no default value

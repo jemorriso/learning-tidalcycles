@@ -1,0 +1,7 @@
+d1 $ sound "bd*16" # djf (sine)
+
+d1 $ sound "bd*16" # djf (cF 0.5 "41")
+
+d1 $ sound "bd*16" # djf ("^41") # room ("^42")
+
+hush
