@@ -35,6 +35,11 @@ Follow the rest of the manual install process from [tidalcyles](https://tidalcyc
 
 Install vim tidal, go to install directory, run `make install`
 
+## Sunday, May 14, 2023
+Tried to get vim-tidal to open a `ToggleTerm` window by messing around with the vim-tidal source, and trying to use `TermExec` instead of native neovim terminal open. Didn't work properly but it did actually open the tidal repl in a toggleterm window, it just couldn't properly update the repl because it couldn't find the terminal id or something. It was a hacky attempt anyway.
+
+Better long-term solution would be to write function that relies on `ToggleTerm`'s functions to send line or blocks of text, the issue is that `vim-tidal` adds delimiters to send block comments. That's why I need to write my own function that utilizes `ToggleTerm`'s internal functions. I don't want to mess around with vimscript at all. But for now just stick with `vim-tidal` native terminal and open a new tab.
+
 ---
 
 [Forum Index weeks 1 to 4](https://club.tidalcycles.org/t/weeks-1-4-index/395)
@@ -1147,3 +1152,77 @@ using mini-notation:
 `d1 $ sound "bd*16" # djf ("^41")`
 
 the disadvantage of mini-notation is that there's no default value
+
+---
+
+## [week 7 lesson 1 - composing patterns together](./week-7-lesson-1.tidal)
+
+[source](https://tidalcycles.org/docs/patternlib/tutorials/course2/#lesson-1-composing-patterns-together)
+
+### overlay
+play two given patterns at the same time
+```
+d1 $ overlay (fast "1 2 3 4" $ sound "lt mt ht ~")
+             (sound "clap:4(3,8)" # speed 2)
+```
+
+### stack
+play many patterns at the same time
+```
+d1 $ stack [(fast "1 2 3 4" $ sound "lt mt ht ~"),
+            (sound "clap:4(3,8)" # speed 2),
+            sound "[kick:5(5,8), snare:3(7,16,3)]"
+           ]
+```
+> `stack` and `overlay` are useful because you can manipulate all the patterns at once, rather having them in different variables
+
+### all
+apply function to all variables
+`all $ (chunk 4 (hurry 2))`
+
+stop applying it:
+`all id`
+which makes it do nothing
+
+downside to `all` is that you can't control which variables to apply function to - it applies to all of them
+
+### append
+make 2 patterns play back to back
+
+### cat
+make many patterns play back to back
+
+`append` and `cat` have the same syntax as `overlay` and `stack`
+
+### fastappend and fastcat
+same as `append` and `cat` but squishes them into one cycle instead of playing *n* cycles
+
+### seqPLoop
+combine stack and cat so we can overlap some parts of each pattern like so:
+```
+d1 $ seqPLoop [(0, 1, fast "1 2 3 4" $ sound "lt mt ht ~"),
+               (1, 2, sound "clap:4(3,8)" # speed 2),
+               (2, 3, sound "[kick:5(5,8), snare:3(7,16,3)]")
+              ]
+```
+
+#### naming patterns within
+```
+let florence = fast "1 2 3 4" $ sound "lt mt ht ~"
+in
+d1 $ seqPLoop [(0, 2, florence),
+               (1, 3, sound "clap:4(3,8)" # speed 2),
+               (3, 4, sound "[kick:5(5,8), snare:3(7,16,3)]"),
+               (3, 5, florence # coarse 5)
+              ]
+```
+since we use `in` keyword, i think when we update `florence`, it takes effect in `d1` as well
+
+### qtrigger
+one-shot pattern execution:
+```
+d1 $ qtrigger $ seqP [(0, 2, fast "1 2 3 4" $ sound "lt mt ht ~"),
+                        (1, 3, sound "clap:4(3,8)" # speed 2),
+                        (5, 6, sound "[kick:5(5,8), snare:3(7,16,3)]")
+                       ]
+```
