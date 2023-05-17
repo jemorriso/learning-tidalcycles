@@ -1226,3 +1226,41 @@ d1 $ qtrigger $ seqP [(0, 2, fast "1 2 3 4" $ sound "lt mt ht ~"),
                         (5, 6, sound "[kick:5(5,8), snare:3(7,16,3)]")
                        ]
 ```
+
+---
+
+## [week 7 lesson 2 - composing functions together](./week-7-lesson-2.tidal)
+
+[source](https://tidalcycles.org/docs/patternlib/tutorials/course2#lesson-2-composing-functions-together)
+
+### the `.` operator
+is basically just a pipe operator to join functions
+```
+d1 $ every 3 (rev . chop 8) $
+  sound "bd [~ sd] bd sd" # squiz 2
+```
+here, `chop` is applied before `rev`. Order does matter
+
+#### as compared to the `$` operator
+note that the `$` operator accepts a *value* as its RHS, not a function
+
+the `.` operator chains 2 functions such that they will both get applied to the input value
+
+***
+
+these are equivalent
+```
+d1 $ every 3 ((# room 0.7) . rev . chop 8 . fast 2) $
+  sound "bd [~ sd] bd sd" # squiz 2
+
+d1 $ every 3 ((# squiz 2) . (# room 0.7) . rev . chop 8 . fast 2) $
+  sound "bd [~ sd] bd sd"
+```
+notice how we're moving the effect and turning it into a function by including the `#`
+
+---
+
+## [week 7 lesson 3 - composing tracks with the "ur" function](./week-7-lesson-3.tidal)
+
+[source](https://tidalcycles.org/docs/patternlib/tutorials/course2#lesson-3-composing-tracks-with-the-ur-function)
+
