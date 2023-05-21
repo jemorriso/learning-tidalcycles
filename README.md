@@ -1261,6 +1261,59 @@ notice how we're moving the effect and turning it into a function by including t
 ---
 
 ## [week 7 lesson 3 - composing tracks with the "ur" function](./week-7-lesson-3.tidal)
-
 [source](https://tidalcycles.org/docs/patternlib/tutorials/course2#lesson-3-composing-tracks-with-the-ur-function)
+### ur
+allows you to give names to patterns within a pattern, and play them back to back, using the name you gave each pattern to make it easier
+```
+d1 $ ur 4 "bdsd claps" 
+[
+  ("bdsd", sound "bd [~ sd] bd sd" # squiz 2),
+  ("claps", sound "clap:4*2 clap:4*3"
+    # delay 0.8 # dt "t" # dfb 0.4
+    # orbit 4 # speed 4
+  )
+][]
+```
+this will play `bdsd bdsd claps claps`. The pattern is spread across the number of cycles.
 
+> here is the key to layering patterns:
+```
+d1 $ ur 4 "[bdsd, claps]" 
+[
+  ("bdsd", sound "bd [~ sd] bd sd" # squiz 2),
+  ("claps", sound "clap:4*2 clap:4*3"
+    # delay 0.8 # dt "t" # dfb 0.4
+    # orbit 4 # speed 4
+  )
+][]
+```
+here we're using square brackets so that each element in the 'list' inside the square brackets, `[bdsd, claps]` gets patterned individually onto the number of cycles. So here `bdsd` and `claps` are simply playing at the same time
+
+of course you can use any mini-notation to make it as complex as you need to
+
+***
+there are some technicalities with these effects all going to the same channel, but only being applied to one pattern. That's why we use `orbit 4` above... to avoid applying effects to the other patterns
+- specifically to avoid applying `delay` to the other patterns
+
+these sound different:
+```
+d1 $ stack [sound "off(3,8)" # room 0 # orbit 4, sound "clap:4(5,8)" # room 0.3 # sz 0.9]
+
+d1 $ stack [sound "off(3,8)" # room 0, sound "clap:4(5,8)" # room 0.3 # sz 0.9]
+```
+in the second case you can hear that the first pattern actually has some reverb (room) applied to it, even though it has `room 0`
+
+***
+```
+d1 $ ur 16 "[bdsd, ~ claps, ~ [bass bass:crunch] ~ bass]"
+  [("bdsd", sound "bd [~ sd] bd sd" # squiz 2),
+   ("claps", sound "clap:4*2 clap:4*3"
+     # delay 0.8 # dt "t" # dfb 0.4
+     # orbit 4 # speed 4
+   ),
+   ("bass", struct "t(3,8)" $ sound "dbass" # shape 0.7 # speed "[1, ~ 2]")
+  ]
+  [("crunch", (# crush 3))
+  ]
+```
+notice how we define `crunch` in the 2nd list, and then refer to it in the first list. That's what the 2nd list is for

@@ -4,6 +4,29 @@ d1 $ every 3 ((# squiz 2) . (# room 0.7) . rev . chop 8 . fast 2) $
 d1 $ every 3 ((# room 0.7) . rev . chop 8 . fast 2) $
   sound "bd [~ sd] bd sd" # squiz 2
 
+-- deconstructing this pattern
+d1 $ ur 16 "[bdsd, ~ claps, ~ [bass bass:crunch] ~ bass]"
+  [("bdsd", sound "bd [~ sd] bd sd" # squiz 2),
+   ("claps", sound "clap:4*2 clap:4*3"
+     # delay 0.8 # dt "t" # dfb 0.4
+     # orbit 4 # speed 4
+   ),
+   ("bass", struct "t(3,8)" $ sound "dbass" # shape 0.7 # speed "[1, ~ 2]")
+  ]
+  [("crunch", (# crush 3))
+  ]
+
+d1 $ ur 16 "bdsd" [("bdsd", sound "bd [~ sd] bd sd" # squiz 2)][]
+
+d1 $ ur 4 "bdsd claps" 
+[
+  ("bdsd", sound "bd [~ sd] bd sd" # squiz 2),
+  ("claps", sound "clap:4*2 clap:4*3"
+    # delay 0.8 # dt "t" # dfb 0.4
+    # orbit 4 # speed 4
+  )
+][]
+
 --------------------------------------------------------------------------------
 -- Composing functions together
 
@@ -38,4 +61,13 @@ d1 $ every 3 (rev . chop 8 . fast 2) $
 d1 $ every 3 ((# room 0.7) . rev . chop 8 . fast 2) $
   sound "bd [~ sd] bd sd" # squiz 2
 
-Have fun!
+d1 $ ur 16 "[bdsd, ~ claps, ~ [bass bass:crunch] ~ bass]"
+  [("bdsd", sound "bd [~ sd] bd sd" # squiz 2),
+   ("claps", sound "clap:4*2 clap:4*3"
+     # delay 0.8 # dt "t" # dfb 0.4
+     # orbit 4 # speed 4
+   ),
+   ("bass", struct "t(3,8)" $ sound "dbass" # shape 0.7 # speed "[1, ~ 2]")
+  ]
+  [("crunch", (# crush 3))
+  ]
