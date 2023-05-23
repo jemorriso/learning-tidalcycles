@@ -1262,6 +1262,7 @@ notice how we're moving the effect and turning it into a function by including t
 
 ## [week 7 lesson 3 - composing tracks with the "ur" function](./week-7-lesson-3.tidal)
 [source](https://tidalcycles.org/docs/patternlib/tutorials/course2#lesson-3-composing-tracks-with-the-ur-function)
+
 ### ur
 allows you to give names to patterns within a pattern, and play them back to back, using the name you gave each pattern to make it easier
 ```
@@ -1317,3 +1318,48 @@ d1 $ ur 16 "[bdsd, ~ claps, ~ [bass bass:crunch] ~ bass]"
   ]
 ```
 notice how we define `crunch` in the 2nd list, and then refer to it in the first list. That's what the 2nd list is for
+
+---
+
+## [week 8 lesson 1 - shifting time / beat rotation](./week-8-lesson-1.tidal)
+[source](https://tidalcycles.org/docs/patternlib/tutorials/course2#lesson-1-shifting-time--beat-rotation)
+
+### <~ and ~> operators
+rotate left and rotate right respectively
+
+```
+tidal> drawLine "a b c d"
+[15 cycles]
+|abcd|abcd|abcd|abcd|abcd|abcd|abcd|abcd|abcd|abcd|abcd|abcd|abcd|abcd|abcd
+
+tidal> drawLine $ 0.25 <~ "a b c d"
+[15 cycles]
+|bcda|bcda|bcda|bcda|bcda|bcda|bcda|bcda|bcda|bcda|bcda|bcda|bcda|bcda|bcda
+
+tidal> drawLine $ 0.25 ~> "a b c d"
+[15 cycles]
+|dabc|dabc|dabc|dabc|dabc|dabc|dabc|dabc|dabc|dabc|dabc|dabc|dabc|dabc|dabc
+```
+
+since it's an infix operator you can't do this:
+```
+d1 $ "<0 0.25 0.75>" ~> $ n "[0 [1 0] 6*2 [3 4*2], 8(5,8)]"
+  # sound "cpu2" # crush 4
+```
+but you can do this to make it behave like a normal function:
+```
+d1 $ (~>) "<0 0.25 0.75>" $ n "[0 [1 0] 6*2 [3 4*2], 8(5,8)]"
+  # sound "cpu2" # crush 4
+```
+or just wrap it in parens:
+```
+d1 $ "<0 0.25 0.75>" ~> (n "[0 [1 0] 6*2 [3 4*2], 8(5,8)]"
+  # sound "cpu2" # crush 4)
+```
+
+> this beat rotation is actually perfect for chopping loops:
+```
+-- This all works nicely with chopped-up loops:
+d1 $ every 2 ("e" <~) $ every 3 (0.25 <~) $ loopAt 1 $ chop 8 
+$ sound "break:8"
+```
