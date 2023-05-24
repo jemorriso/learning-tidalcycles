@@ -79,4 +79,5 @@ d1 $ ("<0 0.25 0.75>" ~>) $ n "[0 [1 0] 6*2 [3 4*2], 8(5,8)]"
 # sound "cpu2" # crush 4
 
 -- This all works nicely with chopped-up loops:
-d1 $ every 2 ("e" <~) $ every 3 (0.25 <~) $ loopAt 1 $ chop 8 $ sound "break:8"
+d1 $ every 2 ("e" <~) $ every 3 (0.25 <~) $ loopAt 1 $ chop 8 
+$ sound "break:8"

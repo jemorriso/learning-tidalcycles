@@ -1363,3 +1363,30 @@ d1 $ "<0 0.25 0.75>" ~> (n "[0 [1 0] 6*2 [3 4*2], 8(5,8)]"
 d1 $ every 2 ("e" <~) $ every 3 (0.25 <~) $ loopAt 1 $ chop 8 
 $ sound "break:8"
 ```
+
+---
+
+## [week 8 lesson 2 - binary patterns](./week-8-lesson-1.tidal)
+[source](https://tidalcycles.org/docs/patternlib/tutorials/course2#lesson-2-binary-patterns)
+### struct
+```d1 $ struct "t f t t f t f f" $ sound "snare:4"```
+you could use `~` in place of `f` but then you wouldn't be able to invert:
+```d1 $ struct (inv  "t f t t f t f f" ) $ sound "snare:4"```
+
+### stitch
+`d1 $ stitch "t(3,8)" (sound "kick:4") (sound "snare:4")`
+fill the gaps in the kick with the snare
+
+stitch operates on patterns of *words* not sounds:
+`d1 $ sound (stitch "t(<3 5>,<8 8 8 6>,<0 2 4>)" "kick:4" "hc")`
+
+patterning `t` and `f`:
+`drawLine $ struct "<t f>(3,8)" "a"`
+
+### sew
+sew is like `stich` but it splits on time segments
+```
+-- If we have four claps spread over the cycle, we hear the second two
+-- of them:
+d1 $ sew "t f" (sound "kick") (sound "clap:4*4")
+```
