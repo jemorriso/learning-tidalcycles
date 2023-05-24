@@ -1390,3 +1390,31 @@ sew is like `stich` but it splits on time segments
 -- of them:
 d1 $ sew "t f" (sound "kick") (sound "clap:4*4")
 ```
+
+---
+
+## [week 8 lesson 3 - binary patterns](./week-8-lesson-3.tidal)
+[source](https://tidalcycles.org/docs/patternlib/tutorials/course2#lesson-3-fitting-values-to-patterns)
+
+### fit
+type signature:
+`fit :: Int -> [a] -> Pattern Int -> Pattern a`
+> fit things from list `[a]` into int pattern `Pattern Int`
+
+uses the structure of the integer pattern for rhythm, but uses the numbers to index into the list:
+`d1 $ n (fit 0 [9,10,11,12,13,14] "0 1 2 3") # s "alphabet"`
+so it's getting the 9th, 10th, 11th and 12th letters of the alphabet and playing them in a row
+- the indexes also wrap around
+
+`d1 $ n (fit 0 [9,10,11,12,13,14] "[0 3] [1 2] 4 [~ 5]") # s "alphabet"`
+
+the first parameter is an *offset* so each time you cycle, since the integer here is `1`, it starts incremented by one so it goes j,k,l then k,l,m ...
+`d1 $ n (fit 1 [9,10,11,12,13,14] "0 1 2 ~") # s "alphabet"`
+
+> he says you hear it in acid house 😮
+```
+-- This can be nice for generating melodies. The rhythm stays the same, but
+-- the notes evolve, moving through the pattern
+d1 $ note (fit 2 [0,2,7,5,12] "0 ~ 1 [2 3]") # sound "supermandolin"
+  # legato 2 # gain 1.3
+```
