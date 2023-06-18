@@ -1,4 +1,4 @@
-## Installation
+## installation
 
 I used the [automatic installation script](https://tidalcycles.org/docs/getting-started/macos_install)
 
@@ -24,11 +24,13 @@ Once SuperDirt is running, run `tidal` from command line which is a script provi
 Then use vim tidal / slime to send snippets to the tmux window running the `tidal` command
 
 ## Install without the automatic install script
+
 Follow [recommended haskell install](https://www.haskell.org/ghcup/)
 
 Do `brew install --cask supercollider`
 
 Get [latest sc3-plugins version](https://github.com/supercollider/sc3-plugins), unzip, and move `SC3plugins` folder to `/Users/jerry/Library/Application Support/SuperCollider/Extensions/SC3plugins`
+
 > there seem to be a bunch of extra files that supercollider tries to load and errors, but I think it's picking up the plugin files properly as well.
 
 Follow the rest of the manual install process from [tidalcyles](https://tidalcycles.org/docs/getting-started/macos_install/)
@@ -36,6 +38,7 @@ Follow the rest of the manual install process from [tidalcyles](https://tidalcyc
 Install vim tidal, go to install directory, run `make install`
 
 ## Sunday, May 14, 2023
+
 Tried to get vim-tidal to open a `ToggleTerm` window by messing around with the vim-tidal source, and trying to use `TermExec` instead of native neovim terminal open. Didn't work properly but it did actually open the tidal repl in a toggleterm window, it just couldn't properly update the repl because it couldn't find the terminal id or something. It was a hacky attempt anyway.
 
 Better long-term solution would be to write function that relies on `ToggleTerm`'s functions to send line or blocks of text, the issue is that `vim-tidal` adds delimiters to send block comments. That's why I need to write my own function that utilizes `ToggleTerm`'s internal functions. I don't want to mess around with vimscript at all. But for now just stick with `vim-tidal` native terminal and open a new tab.
@@ -446,23 +449,27 @@ doesn't make sense.
 
 [source](https://tidalcycles.org/docs/patternlib/tutorials/course1/#lesson-4-chop-and-striate)
 
-
 ### once
+
 `once $ sound "break:8"`
 simply plays the sample one time
 
 ### begin
+
 `d1 $ sound "break:8*4" # begin 0.75 # end 1`
 plays the last quarter of the break 4 times
 
 ### unit
-change behaviour of `speed` so that it matches the *cps*
+
+change behaviour of `speed` so that it matches the _cps_
+
 - at least that's what `unit "c"` does
-`d1 $ sound "break:8*4" # speed 1 # unit "c" # begin 0.75 # end 1`
+  `d1 $ sound "break:8*4" # speed 1 # unit "c" # begin 0.75 # end 1`
 
 `chop` and `striate` help manage the above automatically: `begin`, `unit` and `end`
 
 ### loopAt
+
 `loopAt` sets where to loop on the cycle - if `loopAt` is set to 2 your loop will run once every two cycles, effectively halving the tempo
 
 `d1 $ slow 2 $ loopAt 2 $ chop 4 $ sound "break:8 break:9"`
@@ -471,13 +478,16 @@ here we're slowing by 2 in order to make room for both sounds...
 makes the chopped bits trigger overlapping which we obviously don't want
 
 ### chop
+
 `chop` simply chops the sample in parts, which you can then do what you want with them, but I guess the thing is that they are in order
 
 ### striate
+
 `striate` interweaves the sounds, layering them on top of one another
 
 `d1 $ slow 2 $ loopAt 2 $ striate 4 $ sound "break:8 break:9"`
 cuts it into 8 parts, 4 per sound, and then plays 1a,2a,1b,2b,3a,3b,4a,4b
+
 - again we need to slow by 2 to fit all the sounds in
 
 `d1 $ slow 4 $ loopAt 1 $ striate 2 $ sound "break:1*4"`
@@ -490,9 +500,10 @@ repetition of 4 over each striation
 [source](https://tidalcycles.org/docs/patternlib/tutorials/course1/#lesson-1-continous-patterns-and-random-functions)
 
 > continuous functions cannot be used as structure because no trigger messages are sent to superdirt
-so if you want to use continuous function, you can use it as values or do something called *sample-and-hold*
+> so if you want to use continuous function, you can use it as values or do something called _sample-and-hold_
 
 ### segment
+
 sample values from a continuous function so we can use it as structure:
 `d1 $ speed (segment 32 $ range 0.5 2.5 sine) # sound "bd"`
 
@@ -500,50 +511,62 @@ sample values from a continuous function so we can use it as structure:
 does not work
 
 ### struct
+
 define some structure to sample from the continuous function:
 `d1 $ speed (struct "t(3,8)" $ slow 2 $ range 0.5 2.5 sine) # sound "bd"`
 here `t(3,8)` means a boolean array in the `(3,8)` Euclidean pattern, where 3/8 are true and the rest false
+
 - you could do `f(3,8)` as well or even `<f t>(3,8)`
 
 you can use patterns:
 `d1 $ speed (struct "t [t f] [f t] t" $ slow 2 $ range 0.5 2.5 sine) # sound "bd"`
 
 ### sine
+
 we can apply `sine` to patterns to make a sine wave - very cool what you can do
+
 - `sine`s amplitude is between 0 and 1
 
 `d1 $ sound "bd*32" # speed (sine + 0.5)`
 do this to make it between 0.5 and 1.5 (avoid speed 0)
 
 ### square, sine, saw, tri
+
 different waveforms
 
 ### range
+
 `d1 $ sound "bd*32" # speed (range 0.5 1.5 sine)`
 achieves the same as above
 
 ### rand
+
 `rand` is a continuous function that returns random values:
 `d1 $ sound "bd(5,8)" # speed (range 1 3 rand)`
 
 `d1 $ sound "bd*32" # speed (range 1 3 rand)`
-sounds like a motorboat! Note that the pitch is changing because the sample speed changes, but the *structure comes from the left* so it's always
+sounds like a motorboat! Note that the pitch is changing because the sample speed changes, but the _structure comes from the left_ so it's always
 32nd notes
 
 ### perlin
+
 similar to `rand`, but smoothly transitions between random values each cycle
 `d1 $ sound "bd(5,8)" # speed (range 1 3 perlin)`
 
 ### room
+
 reverb.
+
 ```
 d1 $ sound "clap:4*4"
 # room 0.7
 # sz (slow 4 saw)
 ```
+
 here we're passing a slow saw wave to `sz` in order to modulate reverb!
 
 ### sz
+
 define the "size of the room" for reverb
 
 ---
@@ -553,75 +576,96 @@ define the "size of the room" for reverb
 [source](https://tidalcycles.org/docs/patternlib/tutorials/course1/#lesson-2-random-marathon-part-i)
 
 ### rand
+
 function `rand` gives values between 0 and 1, so you can shape the random number range you want using arithmetic
-- it is a *continuous* function, but a *deterministic* function of the clock as a matter of fact
+
+- it is a _continuous_ function, but a _deterministic_ function of the clock as a matter of fact
 
 ### resetCycles
+
 - resets cycle count to zero, as though you have just started tidal - so if you do this again with the same random function, you will see that it is deterministic
 
 ### repeatCycles
-repeat a cycle *n* times
-- do this with `rand` so that you get a new random pattern every *n* cycles
+
+repeat a cycle _n_ times
+
+- do this with `rand` so that you get a new random pattern every _n_ cycles
 - this is helpful to latch onto some repetition
 
 ### irand
+
 pick randomly from a set of integers
 `d2 $ n (struct "t(5,8)" $ (irand 8) + 24) # sound "rash"`
 generates a random sequence of integers between 24 and 32
 
 ### using Mini-notation
+
 #### the `|` operator
+
 pick randomly from a set of subsequences in an n-pattern
+
 ```
 d1 $ n "0 [0|1*3|2*8|3 4 5] 2 3" # sound "cpu"
    # speed 1.5
 ```
+
 #### the `?` operator
+
 randomly drop an event
-```d1 $ sound "bd bd bd clap?"```
+`d1 $ sound "bd bd bd clap?"`
 with 50/50 probability
 
-```d1 $ sound "bd bd bd clap?0.1"```
+`d1 $ sound "bd bd bd clap?0.1"`
 0.1 probability of dropping the clap
 
-```d1 $ sound "bd bd bd bd*8?0.2"```
+`d1 $ sound "bd bd bd bd*8?0.2"`
 applied vector-wise, so that each event in the sequence has 0.2 prob of being dropped
 
 ### scramble
+
 divide pattern into `n` parts, and then pick them at random
+
 ```
 d1 $ scramble 4 $ n "0 1 2 3 4 5 6 7" # sound "arpy"
    # room 0.3 # sz 0.8
 ```
+
 here the 4 parts are (0,1),(2,3),(4,5),(6,7)
 
 I can see this being useful for this particular case, chopping up an arpeggio
 
 ### shuffle
+
 divide pattern into `n` parts, and then shuffle them, such that each part is played once per cycle
 
 ### choose
+
 pick between single values
+
 - function is continuous so you need to give it structure
 - any structure will work... euclidean, etc.
 
-```d1 $ sound (segment 8 $ choose ["bd", "arpy", "snare"])```
+`d1 $ sound (segment 8 $ choose ["bd", "arpy", "snare"])`
 
 ### wchoose
+
 weighted choose
-```d1 $ sound "clap*4" # speed (wchoose [(2, 4), (-2, 2)])```
+`d1 $ sound "clap*4" # speed (wchoose [(2, 4), (-2, 2)])`
 choose speed 2 with weight 4, -2 with weight 2 (half as likely)
-- note that *negative speed* makes the sample play in reverse!
+
+- note that _negative speed_ makes the sample play in reverse!
 
 ### randomness in tidal
+
 is deterministic - derived from the clock. So if we use `rand` function twice, the two things being randomized get the same random numbers at the same times.
-```d1 $ sound "clap*2" # speed (range 0.1 2 rand) # pan rand```
+`d1 $ sound "clap*2" # speed (range 0.1 2 rand) # pan rand`
 here you can hear that when `rand` is low, the clap is low in pitch and panned to the left, and vice versa for high `rand`
 
 ```
 d1 $ sound "clap*2" # speed (range 0.1 2 rand)
   # pan (slow 1.001 rand)
 ```
+
 here we slow one of the patterns down so that now they are completely uncorrelated
 
 ---
@@ -631,21 +675,26 @@ here we slow one of the patterns down so that now they are completely uncorrelat
 [source](https://tidalcycles.org/docs/patternlib/tutorials/course1/#lesson-2-random-marathon-part-i)
 
 ### cat
+
 concatenate patterns together
-```d1 $ sound (cat ["kick snare:4 [~ kick] snare:5", "kick snare:4 . hc(5,8)"])```
+`d1 $ sound (cat ["kick snare:4 [~ kick] snare:5", "kick snare:4 . hc(5,8)"])`
 
 ### randcat
+
 concatenate them in a random order
-```d1 $ sound (randcat ["kick snare:4 [~ kick] snare:5", "kick snare:4 . hc(5,8)"])```
+`d1 $ sound (randcat ["kick snare:4 [~ kick] snare:5", "kick snare:4 . hc(5,8)"])`
 
 ```
 d1 $ vowel (randcat ["a e*2 i o", "e o u", "o*8"])
    # sound ("kick snare:4 clap:4")
 ```
+
 notice how the randomly chosen pattern is used as the structure and the sound gets mapped onto it
+
 > seems like it doesn't always pick one of each though... in which case why do you need to concatenate? Why not just `choose`?
 
 ### wrandcat
+
 weighted `randcat`
 
 ```
@@ -655,40 +704,50 @@ d1 $ sound (wrandcat [("bd sn:4(3,8)", 100),
                      ]
            )
 ```
+
 picks the first pattern over and over. So not seeing the difference between `wchoose` and `wrandcat` here...
 
 ### stripe
+
 `stripe n` divides the cycle into `n` parts randomly, and then plays `n` repetitions
+
 ```
 d1 $ stripe 2 $ n "0 4*2 ~ 4 2 4 5 ~" # sound "cpu2"
   # squiz 2
-  ```
+```
+
 e.g. random number 0.75 is chosen, the first cycle takes up 0.75 cycles and the second one takes up 0.25
 
 ### degrade
+
 ```
 d1 $ sound "bd*8?"
 
 -- Degrade is a function that does the same:
 d1 $ degrade $ sound "bd*8"
 ```
+
 i.e. it randomly drops out notes like the `?` mini-notation syntax
 
 ### degradeby
+
 weighted `degrade`
-```d1 $ degradeBy 0.6 $ sound "bd*8"```
+`d1 $ degradeBy 0.6 $ sound "bd*8"`
 60% chance of dropping a note
 
 ### sometimes
+
 apply function only sometimes
-```d1 $ sometimes (# crush 4) $ n "0 ~ 3 1 5 2 ~ 5" # sound "cpu"```
+`d1 $ sometimes (# crush 4) $ n "0 ~ 3 1 5 2 ~ 5" # sound "cpu"`
 note that it occurs within cycle - here `crush` may be applied for some sections and then not for other sections within one cycle
 
 ### sometimesBy
+
 weighted `sometimes`
-```d1 $ sometimesBy 0.3 (# crush 4) $ n "0 ~ 3 1 5 2 ~ 5" # sound "cpu"```
+`d1 $ sometimesBy 0.3 (# crush 4) $ n "0 ~ 3 1 5 2 ~ 5" # sound "cpu"`
 
 ### other frequencies
+
 ```
 -- There's some aliases for different probabilities:
 
@@ -702,26 +761,30 @@ almostAlways = sometimesBy 0.9
 ```
 
 ### somecycles
+
 randomly apply to cycles rather than individual events within the cycle
+
 ```
 d1 $ somecycles (hurry 2) $ n "0 ~ 3 1 5 2 ~ 5" # sound "cpu"
   # speed 1.5
-  ```
+```
 
 ### somecyclesBy
+
 weighted `somecycles`
 
 ### randslice
+
 take a random chunk of the beat and play 1 event at the beginning of the cycle
-```d1 $ randslice 4 $ sound "break:8"```
+`d1 $ randslice 4 $ sound "break:8"`
 plays 1 quarter of the break (so there are then 3 quarter notes of silence)
 
-```d1 $ loopAt 1 $ randslice 4 $ sound "break:8*4"```
+`d1 $ loopAt 1 $ randslice 4 $ sound "break:8*4"`
 now it fits 4 quarter notes into 1 cycle
 
 still not totally sure what `loopAt` is doing... I think it packs the quarter notes into 1 cycle
 
-```d1 $ splice 4 (segment 4 $ irand 4) $ sound "break:8"```
+`d1 $ splice 4 (segment 4 $ irand 4) $ sound "break:8"`
 Another way of achieving random break chopping... here we segment the break into 4 parts, pick randomly amongst them, and then play 1 after the other with `splice 4`
 
 ---
@@ -731,6 +794,7 @@ Another way of achieving random break chopping... here we segment the break into
 [source](https://tidalcycles.org/docs/patternlib/tutorials/course2#lesson-1-musical-notes)
 
 ### note
+
 `note "3"` prints out the information about the first cycle, given the note pattern. Use `note` in addition to `drawLine`
 
 ```
@@ -750,6 +814,7 @@ Depending on the instrument you are using, you can use non-integer notes:
 `d1 $ note "12.34" # sound "supermandolin"`
 
 ### sharps and flats
+
 ```
 -- This:
 
@@ -776,6 +841,7 @@ To get different octaves:
 `note "c5 c6 c4 c6"`
 
 These are the same:
+
 ```
 d1 $ n "c a f e" # s "superpiano"
 
@@ -785,6 +851,7 @@ d1 $ note "c a f e" # s "superpiano"
 Note how we use n-patterns for samples as well as synthesizers!
 
 But it means something different for samples:
+
 ```
 -- For samples, they mean something different. 'n' chooses a sample,
 -- 'note' plays it at a different speed, corresponding to a note.
@@ -795,9 +862,11 @@ d1 $ n "0 1" # sound "dsynth"
 -- Different notes:
 d1 $ note "0 1" # sound "dsynth"
 ```
-Need to be careful if using note *letters* with samples, because letters are just aliases for numbers - then it's just picking the numbered sample!
+
+Need to be careful if using note _letters_ with samples, because letters are just aliases for numbers - then it's just picking the numbered sample!
 
 Using both together:
+
 ```
 -- The 'dbass' sample has three bass sounds, again in 'c', of
 -- different lengths.  So it makes sense to use *both* 'note' and 'n'
@@ -806,12 +875,15 @@ d1 $ note "c a f e" # sound "dbass" # n "<0 1 2>"
 ```
 
 ### octave
+
 jump up and down by 12
+
 ```
 -- There's also an 'octave' control to jump up/down in twelves:
 d1 $ note "c a f e" # sound "superpiano"
   # octave "<4 6 3>"
 ```
+
 ---
 
 ## [week 5 lesson 2 - musical notes](./week-5-lesson-2.tidal)
@@ -819,33 +891,41 @@ d1 $ note "c a f e" # sound "superpiano"
 [source](https://tidalcycles.org/docs/patternlib/tutorials/course2/#lesson-2-chords-arpeggios-and-algoraoke)
 
 ### playing chords
-```d1 $ n "c'maj e'maj" # sound "supermandolin"```
+
+`d1 $ n "c'maj e'maj" # sound "supermandolin"`
 alias for `c'maj` is just `'maj`. c is default
 
 these are the same:
+
 ```
 d1 $ arpeggiate $ n "c'maj" # s "superpiano"
 
 d1 $ arpeggiate $ n "c'maj'3" # s "superpiano"
 ```
+
 the reason is the 2nd says play the first 3 notes of the c chord
 
 `d1 $ arpeggiate $ n "c'maj'7" # s "superpiano"`
 this will play c chord, then c chord of higher octave, then finally c note of 2x high octave
 
 these are the same:
+
 ```
 d1 $ n "c'sevenFlat9 a'm9sharp5" # sound "supermandolin"
 
 d1 $ n "[0,4,7,10,13] [9,10,23]" # sound "supermandolin"
 ```
+
 because everything in the chord gets turned into numbers!
 
 ### arpeggiate
+
 `d1 $ arpeggiate $ n "c'maj'4 e'min7'4" # s "superpiano"`
 
 ### arp
+
 `arp` is more flexible because you can specify the pattern in which the chord is arpeggiated
+
 ```
 d1 $ arp "updown thumbup" $ n "<c'maj'4 e'min7'4>" # s "superpiano"
 
@@ -866,6 +946,7 @@ Then you can run effects on the synth in tidal as normal:
 `d1 $ n "c5" # sound "cs80lead" # crush 3 # room 0.2 # sz 0.6`
 
 ### modifying the synth
+
 sounds like there is something wrong with the envelope, apparently because superdirt takes care of the envelopes... so we can remove the envelopes from the synth ??
 
 `d1 $ n "c5" # sound "cs80lead" # crush 3 # room 0.2 # sz 0.6 # vowel "a e" # pF "dtune" "<1 0.2>"`
@@ -893,9 +974,11 @@ SynthDef(\test, {
   |out,sustain=1,freq=440,speed=1,begin=0,end=1,pan,accelerate,offset|
 }).add;
 ```
+
 `test` is the synth name here
 then we have a list of parameters that are either understood by tidal or superdirt
-- note that these parameters are sent *by superdirt* (see how some have default values)
+
+- note that these parameters are sent _by superdirt_ (see how some have default values)
 - `out` is the paramter that superdirt uses to tell us which bus to output on
 
 [here](https://github.com/musikinformatik/SuperDirt/blob/develop/synths/default-synths.scd) is a list of default superdirt synths
@@ -906,12 +989,15 @@ SynthDef(\test, {
   OffsetOut.ar(out,[SinOsc.ar(freq)]);
 }).add;
 ```
-`OffsetOut` is a *ugen* (unit generator) which is like a synth building block
+
+`OffsetOut` is a _ugen_ (unit generator) which is like a synth building block
+
 - send audio to a bus + array of channels to write to
 
 so here we send a sinusoidal oscillator with frequency 440 hz to the bus provided by superdirt.
 
 `ar` means audio rate, as opposed to `kr`, control rate, which is at like a lower granularity for things like knobs... wot
+
 - `kr` is easier on the CPU
 
 ```
@@ -924,6 +1010,7 @@ SynthDef(\test, {
   OffsetOut.ar(out,[outAudio, outAudio]);
 }).add;
 ```
+
 add an envelope so that the sound is modulated using a simple line envelope
 
 note how we multiply the tone by env, which mathematically makes sense. Then duplicated `outAudio` because we're in stereo
@@ -940,6 +1027,7 @@ SynthDef(\test, {
   OffsetOut.ar(out,[outAudio, outAudio]);
 }).add;
 ```
+
 we use `doneAction` in order to free the memory when the synth (or is it the envelope?) is not in use anymore
 
 ```
@@ -953,7 +1041,7 @@ SynthDef(\test2, {
 }).add;
 ```
 
-`Pulse` here is a pulse wave which is just a square wave where we can modify the width as we want - we are doing *pulse wave modulation* by passing in the envelope into its width parameter
+`Pulse` here is a pulse wave which is just a square wave where we can modify the width as we want - we are doing _pulse wave modulation_ by passing in the envelope into its width parameter
 
 ```
 SynthDef(\test3, {
@@ -967,10 +1055,12 @@ SynthDef(\test3, {
   OffsetOut.ar(out,[outAudio, outAudio]);
 }).add;
 ```
+
 here we're using `line` for index, such that we apply `env` to it (from 0 to 1, over `sustain` length)
+
 - that's how we generate our `volume` envelope
 
-use `begin` and `end` in the definition of `line` so we can chop up the envelope in tidal: 
+use `begin` and `end` in the definition of `line` so we can chop up the envelope in tidal:
 `d1 $ s "test3" # begin 0.5 # end 0.8`
 
 ```
@@ -985,6 +1075,7 @@ SynthDef(\test3, {
   OffsetOut.ar(out,DirtPan.ar(outAudio, ~dirt.numChannels, pan, volume));
 }).add;
 ```
+
 We use `DirtPan` which is a utility function that helps SuperDirt integrate with SuperCollider - it ensures our sound is passed to SuperDirt properly...
 
 ```
@@ -1000,6 +1091,7 @@ SynthDef(\test4, {
   OffsetOut.ar(out,DirtPan.ar(outAudio, ~dirt.numChannels, pan, volume));
 }).add;
 ```
+
 Use the volume envelope to automate the clamp effect passed via tidal (note how it's in our params list):
 
 `d1 $ n "[7 0 3 0]*4" |+ n "<0 5 -2 3>*2" |+ s "test4" # pF "clamp" (slow 4 $ cosine)`
@@ -1011,6 +1103,7 @@ That sounds pretty crazy! The amount of `clamp` is being modulated by a cosine w
 ## [week 6 lesson 1 - canons with 'off'](./week-6-lesson-1.tidal)
 
 [source](https://tidalcycles.org/docs/patternlib/tutorials/course2#lesson-1-canons-with-off)
+
 ```
 tidal> :t off
 off
@@ -1019,10 +1112,12 @@ off
 ```
 
 the last `Pattern a` is the output, the first 3 expressions are inputs
+
 - 'Pattern Time' means the `Time` input is time-related in some way
 
 `d1 $ off 0.25 (# crush 4) $ n "c e" # sound "supermandolin"`
-here *0.25* means quarter note
+here _0.25_ means quarter note
+
 - see how there are 3 inputs:
   - 0.25
   - (# crush 4)
@@ -1034,7 +1129,8 @@ see worksheet for list of offset shorthands available
 
 `d1 $ off "e" (|+ n "<7 12 -5>") $ n (slow 2 "c(3,8) a(3,8) f(5,8) e*2") # sound "supermandolin" # sustain 0.75`
 
-`slow` makes the pattern take 2 cycles, so we get 3*2 variations with the n-pattern
+`slow` makes the pattern take 2 cycles, so we get 3\*2 variations with the n-pattern
+
 - `e` here means offset by an eighth note
 - add `sustain` because otherwise the synth notes are just filling the size of their grid
 
@@ -1058,6 +1154,7 @@ but randomness is kind of crude for variation
 - note that `arpy` samples are in a pentatonic scale
 
 #### using waveforms on scales
+
 ```
 d1 $ segment 16 $ n (scale "minor"
                      $ floor <$> (range 0 14 sine)
@@ -1068,6 +1165,7 @@ d1 $ segment 16 $ n (scale "minor"
 ```
 
 maps a sine wave onto a minor scale so that it's like it's sampling from the sine wave at intervals, and outputting a note of the minor scale (2 octaves is 14 notes)
+
 - use `floor <$>` because `scale` cannot take floating point number
 - then `segment 16` because the n-pattern does not produce events, need to give it some structure
 
@@ -1080,6 +1178,7 @@ d1 $ struct "t(<9 7>,16)"
   # legato 0.5
   # lpf (range 400 5000 saw) # lpq 0.1
 ```
+
 adds Euclidean structure
 
 ```
@@ -1094,6 +1193,7 @@ d1 $ segment 16 $
 ```
 
 makes a longer form variation by using slow sine and cosine waves
+
 - see how instead of using `range` we just multiply by `<6 -3>`
 
 ---
@@ -1103,9 +1203,11 @@ makes a longer form variation by using slow sine and cosine waves
 [source](https://tidalcycles.org/docs/patternlib/tutorials/course2#lesson-3-controlling-midi-devices)
 
 ### how to connect tidal to ableton on macos
+
 follow [this yt vid](https://www.youtube.com/watch?v=cdB0dBGiar4) (only first part) to create a virtual midi port using IAC driver in MIDI studio
 
 then, follow the source video above to find and add the midi out to superdirt like so:
+
 ```
 MIDIClient.init;
 
@@ -1113,6 +1215,7 @@ MIDIClient.init;
 
 ~dirt.soundLibrary.addMIDI(\tidal1, ~midiOut);
 ```
+
 (the midi port was named `tidal1` in IAC driver)
 
 - in ableton, set the midi in of `tidal1` to 'track'
@@ -1123,6 +1226,7 @@ from tidal, use `tidal1` like so:
 `d1 $ n "0 7 12" # sound "tidal1"`
 
 ### control change messages
+
 you can send cc messages to the midi device, but you need to know the numbers of the midi controls
 `d1 $ n "0 7 12" # sound "tidal1" # cc "1:60"`
 where `1` is the midi control number and `60` is the amount (possibly from 0-128)
@@ -1134,10 +1238,9 @@ for cc number and cc value
 you can pattern the control change values!
 `d1 $ n "0 7 12" # sound "tidal1" # ccv "<0 127>" # ccn "1" `
 
-
 ---
 
-## [week 6 lesson 4 - controlling MIDI devices](./week-6-lesson-4.tidal)
+## [week 6 lesson 4 - controlling Tidal with MIDI](./week-6-lesson-4.tidal)
 
 [source](https://tidalcycles.org/docs/patternlib/tutorials/course2#lesson-4-controlling-tidal-with-midi)
 [source2](https://tidalcycles.org/docs/working-with-patterns/Controller_Input/)
@@ -1146,6 +1249,7 @@ use the code in [week-6-lesson-4.scd](./week-6-lesson-4.scd) to connect all avai
 
 `d1 $ sound "bd*16" # djf (cF 0.5 "41")`
 here we're using `cF` which is controlling a float number, with the cc number 41 on my novation launchkey, which is the first fader ([source](https://support.novationmusic.com/hc/en-gb/articles/207561095-What-MIDI-CC-Messages-do-the-controls-on-the-Launchkey-Send-)) in order to turn the fader into a low-pass filter!! (`djf`)
+
 - 0.5 is the default value
 
 using mini-notation:
@@ -1160,23 +1264,29 @@ the disadvantage of mini-notation is that there's no default value
 [source](https://tidalcycles.org/docs/patternlib/tutorials/course2/#lesson-1-composing-patterns-together)
 
 ### overlay
+
 play two given patterns at the same time
+
 ```
 d1 $ overlay (fast "1 2 3 4" $ sound "lt mt ht ~")
              (sound "clap:4(3,8)" # speed 2)
 ```
 
 ### stack
+
 play many patterns at the same time
+
 ```
 d1 $ stack [(fast "1 2 3 4" $ sound "lt mt ht ~"),
             (sound "clap:4(3,8)" # speed 2),
             sound "[kick:5(5,8), snare:3(7,16,3)]"
            ]
 ```
+
 > `stack` and `overlay` are useful because you can manipulate all the patterns at once, rather having them in different variables
 
 ### all
+
 apply function to all variables
 `all $ (chunk 4 (hurry 2))`
 
@@ -1187,18 +1297,23 @@ which makes it do nothing
 downside to `all` is that you can't control which variables to apply function to - it applies to all of them
 
 ### append
+
 make 2 patterns play back to back
 
 ### cat
+
 make many patterns play back to back
 
 `append` and `cat` have the same syntax as `overlay` and `stack`
 
 ### fastappend and fastcat
-same as `append` and `cat` but squishes them into one cycle instead of playing *n* cycles
+
+same as `append` and `cat` but squishes them into one cycle instead of playing _n_ cycles
 
 ### seqPLoop
+
 combine stack and cat so we can overlap some parts of each pattern like so:
+
 ```
 d1 $ seqPLoop [(0, 1, fast "1 2 3 4" $ sound "lt mt ht ~"),
                (1, 2, sound "clap:4(3,8)" # speed 2),
@@ -1207,6 +1322,7 @@ d1 $ seqPLoop [(0, 1, fast "1 2 3 4" $ sound "lt mt ht ~"),
 ```
 
 #### naming patterns within
+
 ```
 let florence = fast "1 2 3 4" $ sound "lt mt ht ~"
 in
@@ -1216,10 +1332,13 @@ d1 $ seqPLoop [(0, 2, florence),
                (3, 5, florence # coarse 5)
               ]
 ```
+
 since we use `in` keyword, i think when we update `florence`, it takes effect in `d1` as well
 
 ### qtrigger
+
 one-shot pattern execution:
+
 ```
 d1 $ qtrigger $ seqP [(0, 2, fast "1 2 3 4" $ sound "lt mt ht ~"),
                         (1, 3, sound "clap:4(3,8)" # speed 2),
@@ -1234,21 +1353,26 @@ d1 $ qtrigger $ seqP [(0, 2, fast "1 2 3 4" $ sound "lt mt ht ~"),
 [source](https://tidalcycles.org/docs/patternlib/tutorials/course2#lesson-2-composing-functions-together)
 
 ### the `.` operator
+
 is basically just a pipe operator to join functions
+
 ```
 d1 $ every 3 (rev . chop 8) $
   sound "bd [~ sd] bd sd" # squiz 2
 ```
+
 here, `chop` is applied before `rev`. Order does matter
 
 #### as compared to the `$` operator
-note that the `$` operator accepts a *value* as its RHS, not a function
+
+note that the `$` operator accepts a _value_ as its RHS, not a function
 
 the `.` operator chains 2 functions such that they will both get applied to the input value
 
-***
+---
 
 these are equivalent
+
 ```
 d1 $ every 3 ((# room 0.7) . rev . chop 8 . fast 2) $
   sound "bd [~ sd] bd sd" # squiz 2
@@ -1256,17 +1380,21 @@ d1 $ every 3 ((# room 0.7) . rev . chop 8 . fast 2) $
 d1 $ every 3 ((# squiz 2) . (# room 0.7) . rev . chop 8 . fast 2) $
   sound "bd [~ sd] bd sd"
 ```
+
 notice how we're moving the effect and turning it into a function by including the `#`
 
 ---
 
 ## [week 7 lesson 3 - composing tracks with the "ur" function](./week-7-lesson-3.tidal)
+
 [source](https://tidalcycles.org/docs/patternlib/tutorials/course2#lesson-3-composing-tracks-with-the-ur-function)
 
 ### ur
+
 allows you to give names to patterns within a pattern, and play them back to back, using the name you gave each pattern to make it easier
+
 ```
-d1 $ ur 4 "bdsd claps" 
+d1 $ ur 4 "bdsd claps"
 [
   ("bdsd", sound "bd [~ sd] bd sd" # squiz 2),
   ("claps", sound "clap:4*2 clap:4*3"
@@ -1275,11 +1403,13 @@ d1 $ ur 4 "bdsd claps"
   )
 ][]
 ```
+
 this will play `bdsd bdsd claps claps`. The pattern is spread across the number of cycles.
 
 > here is the key to layering patterns:
+
 ```
-d1 $ ur 4 "[bdsd, claps]" 
+d1 $ ur 4 "[bdsd, claps]"
 [
   ("bdsd", sound "bd [~ sd] bd sd" # squiz 2),
   ("claps", sound "clap:4*2 clap:4*3"
@@ -1288,23 +1418,29 @@ d1 $ ur 4 "[bdsd, claps]"
   )
 ][]
 ```
+
 here we're using square brackets so that each element in the 'list' inside the square brackets, `[bdsd, claps]` gets patterned individually onto the number of cycles. So here `bdsd` and `claps` are simply playing at the same time
 
 of course you can use any mini-notation to make it as complex as you need to
 
-***
+---
+
 there are some technicalities with these effects all going to the same channel, but only being applied to one pattern. That's why we use `orbit 4` above... to avoid applying effects to the other patterns
+
 - specifically to avoid applying `delay` to the other patterns
 
 these sound different:
+
 ```
 d1 $ stack [sound "off(3,8)" # room 0 # orbit 4, sound "clap:4(5,8)" # room 0.3 # sz 0.9]
 
 d1 $ stack [sound "off(3,8)" # room 0, sound "clap:4(5,8)" # room 0.3 # sz 0.9]
 ```
+
 in the second case you can hear that the first pattern actually has some reverb (room) applied to it, even though it has `room 0`
 
-***
+---
+
 ```
 d1 $ ur 16 "[bdsd, ~ claps, ~ [bass bass:crunch] ~ bass]"
   [("bdsd", sound "bd [~ sd] bd sd" # squiz 2),
@@ -1317,14 +1453,17 @@ d1 $ ur 16 "[bdsd, ~ claps, ~ [bass bass:crunch] ~ bass]"
   [("crunch", (# crush 3))
   ]
 ```
+
 notice how we define `crunch` in the 2nd list, and then refer to it in the first list. That's what the 2nd list is for
 
 ---
 
 ## [week 8 lesson 1 - shifting time / beat rotation](./week-8-lesson-1.tidal)
+
 [source](https://tidalcycles.org/docs/patternlib/tutorials/course2#lesson-1-shifting-time--beat-rotation)
 
 ### <~ and ~> operators
+
 rotate left and rotate right respectively
 
 ```
@@ -1342,49 +1481,61 @@ tidal> drawLine $ 0.25 ~> "a b c d"
 ```
 
 since it's an infix operator you can't do this:
+
 ```
 d1 $ "<0 0.25 0.75>" ~> $ n "[0 [1 0] 6*2 [3 4*2], 8(5,8)]"
   # sound "cpu2" # crush 4
 ```
+
 but you can do this to make it behave like a normal function:
+
 ```
 d1 $ (~>) "<0 0.25 0.75>" $ n "[0 [1 0] 6*2 [3 4*2], 8(5,8)]"
   # sound "cpu2" # crush 4
 ```
+
 or just wrap it in parens:
+
 ```
 d1 $ "<0 0.25 0.75>" ~> (n "[0 [1 0] 6*2 [3 4*2], 8(5,8)]"
   # sound "cpu2" # crush 4)
 ```
 
 > this beat rotation is actually perfect for chopping loops:
+
 ```
 -- This all works nicely with chopped-up loops:
-d1 $ every 2 ("e" <~) $ every 3 (0.25 <~) $ loopAt 1 $ chop 8 
+d1 $ every 2 ("e" <~) $ every 3 (0.25 <~) $ loopAt 1 $ chop 8
 $ sound "break:8"
 ```
 
 ---
 
 ## [week 8 lesson 2 - binary patterns](./week-8-lesson-1.tidal)
+
 [source](https://tidalcycles.org/docs/patternlib/tutorials/course2#lesson-2-binary-patterns)
+
 ### struct
-```d1 $ struct "t f t t f t f f" $ sound "snare:4"```
+
+`d1 $ struct "t f t t f t f f" $ sound "snare:4"`
 you could use `~` in place of `f` but then you wouldn't be able to invert:
-```d1 $ struct (inv  "t f t t f t f f" ) $ sound "snare:4"```
+`d1 $ struct (inv  "t f t t f t f f" ) $ sound "snare:4"`
 
 ### stitch
+
 `d1 $ stitch "t(3,8)" (sound "kick:4") (sound "snare:4")`
 fill the gaps in the kick with the snare
 
-stitch operates on patterns of *words* not sounds:
+stitch operates on patterns of _words_ not sounds:
 `d1 $ sound (stitch "t(<3 5>,<8 8 8 6>,<0 2 4>)" "kick:4" "hc")`
 
 patterning `t` and `f`:
 `drawLine $ struct "<t f>(3,8)" "a"`
 
 ### sew
+
 sew is like `stich` but it splits on time segments
+
 ```
 -- If we have four claps spread over the cycle, we hear the second two
 -- of them:
@@ -1394,24 +1545,29 @@ d1 $ sew "t f" (sound "kick") (sound "clap:4*4")
 ---
 
 ## [week 8 lesson 3 - binary patterns](./week-8-lesson-3.tidal)
+
 [source](https://tidalcycles.org/docs/patternlib/tutorials/course2#lesson-3-fitting-values-to-patterns)
 
 ### fit
+
 type signature:
 `fit :: Int -> [a] -> Pattern Int -> Pattern a`
+
 > fit things from list `[a]` into int pattern `Pattern Int`
 
 uses the structure of the integer pattern for rhythm, but uses the numbers to index into the list:
 `d1 $ n (fit 0 [9,10,11,12,13,14] "0 1 2 3") # s "alphabet"`
 so it's getting the 9th, 10th, 11th and 12th letters of the alphabet and playing them in a row
+
 - the indexes also wrap around
 
 `d1 $ n (fit 0 [9,10,11,12,13,14] "[0 3] [1 2] 4 [~ 5]") # s "alphabet"`
 
-the first parameter is an *offset* so each time you cycle, since the integer here is `1`, it starts incremented by one so it goes j,k,l then k,l,m ...
+the first parameter is an _offset_ so each time you cycle, since the integer here is `1`, it starts incremented by one so it goes j,k,l then k,l,m ...
 `d1 $ n (fit 1 [9,10,11,12,13,14] "0 1 2 ~") # s "alphabet"`
 
 > he says you hear it in acid house 😮
+
 ```
 -- This can be nice for generating melodies. The rhythm stays the same, but
 -- the notes evolve, moving through the pattern
